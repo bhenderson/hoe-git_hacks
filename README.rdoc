@@ -1,26 +1,19 @@
 = hoe-git-hacks
 
-* FIX (url)
+* http://plexi
 
 == DESCRIPTION:
 
-FIX (describe your package)
+Hacks for hoe-git until pull requests are seen.
 
 == FEATURES/PROBLEMS:
 
-* FIX (list of features or problems)
-
-== SYNOPSIS:
-
-  FIX (code sample of usage)
-
-== REQUIREMENTS:
-
-* FIX (list of requirements)
+* fixes when git:tag task is called
+* fixes how git tags are looked up.
 
 == INSTALL:
 
-* FIX gem install hoe-git-hacks
+* gem install hoe-git_hacks
 
 == DEVELOPERS:
 
