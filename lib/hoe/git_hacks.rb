@@ -13,5 +13,9 @@ class Hoe
       flags = "--date-order --simplify-by-decoration --pretty=format:%d"
       `git log #{flags}`.scan(%r{#{git_release_tag_prefix}[^,)]+}).reverse
     end
+
+    def define_git_hacks_tasks
+    end
+
   end if Hoe.plugins.include?(:git)
 end
