@@ -11,6 +11,15 @@ class Hoe
       task 'prep_history' do
         update_history_file
       end
+
+      desc "Commit latest changes."
+      task "prep_release" do
+        # opens $EDITOR with default message so user can preview what they are
+        # committing.
+        sh 'git commit -am"Preps for release." -ev'
+      end
+
+      task 'prep_release' => 'prep_history'
     end
 
     # https://github.com/jbarnette/hoe-git/pull/7

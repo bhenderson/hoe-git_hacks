@@ -4,7 +4,8 @@ require 'rubygems'
 require 'hoe'
 
 Hoe.plugin :atti_push
-Hoe.plugin :git
+$:.unshift 'lib'
+Hoe.plugin :version, :git
 
 Hoe.spec 'hoe-git_hacks' do
   developer 'Brian Henderson', 'bhenderson@attinteractive.com'
@@ -13,5 +14,7 @@ Hoe.spec 'hoe-git_hacks' do
 
   self.testlib          = :minitest
 end
+
+task('prep_release').prerequisites.unshift 'version:bump'
 
 # vim: syntax=ruby
