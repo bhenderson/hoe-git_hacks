@@ -32,6 +32,7 @@ class Hoe
       file = self.history_file
       data = File.read file
 
+      return if data[%r'=== #{version} /']
       # append
       File.open file, 'w' do |f|
         write_latest_changelog f
