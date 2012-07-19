@@ -1,6 +1,6 @@
 class Hoe
   module Git_Hacks
-    VERSION = '1.0.0'
+    VERSION = '1.1.0'
 
     # https://github.com/jbarnette/hoe-git/pull/8
     def define_git_hacks_tasks
