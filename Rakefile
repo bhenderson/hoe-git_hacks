@@ -15,6 +15,4 @@ Hoe.spec 'hoe-git_hacks' do
   self.testlib          = :minitest
 end
 
-task('prep_release').prerequisites.unshift 'version:bump'
-
 # vim: syntax=ruby
