@@ -1,3 +1,21 @@
+=== 1.2.0 / 2012-07-25
+
+* 1 minor enhancement:
+
+  * Don't update history if version already exists there.
+
+* 1 bug fix:
+
+  * Removes prereq as hoe-version now takes care of that.
+
+* 4 unknowns:
+
+  * Adds git:manifest to prep_release.
+  * Adds hoe-version plugin and creates prep_release task.
+  * Adds prep_history task.
+  * Preps for release.
+
+
 === 1.1.0 / 2012-07-19
 
 * 1 minor enhancement:
