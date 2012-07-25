@@ -2,8 +2,8 @@ class Hoe
   module Git_Hacks
     VERSION = '1.1.0'
 
-    # https://github.com/jbarnette/hoe-git/pull/8
     def define_git_hacks_tasks
+      # https://github.com/jbarnette/hoe-git/pull/8
       task(:release_to).prerequisites.delete 'git:tag'
       task :postrelease => 'git:tag'
 
@@ -19,7 +19,8 @@ class Hoe
         sh 'git commit -am"Preps for release." -ev'
       end
 
-      task 'prep_release' => 'prep_history'
+      # update the manifest and history files.
+      task 'prep_release' => ['git:manifest', 'prep_history']
     end
 
     # https://github.com/jbarnette/hoe-git/pull/7
