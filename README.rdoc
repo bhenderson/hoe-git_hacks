@@ -10,10 +10,11 @@ Hacks for hoe-git until pull requests are seen.
 
 * fixes when git:tag task is called
 * fixes how git tags are looked up.
+* adds prep_release task
 
 == INSTALL:
 
-* gem install hoe-git_hacks
+* rake install_gem # NOSUDO=1
 
 == DEVELOPERS:
 
