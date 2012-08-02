@@ -21,6 +21,9 @@ class Hoe
 
       # update the manifest and history files.
       task 'prep_release' => ['git:manifest', 'prep_history']
+      # convenience tasks.
+      file 'Manifest.txt' => 'git:manifest'
+      file history_file   => 'prep_history'
     end
 
     # https://github.com/jbarnette/hoe-git/pull/7
