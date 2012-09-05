@@ -3,6 +3,7 @@
 require 'rubygems'
 require 'hoe'
 
+Hoe.plugins.delete :gemcutter
 Hoe.plugin :atti_push
 $:.unshift 'lib'
 Hoe.plugin :version, :git
