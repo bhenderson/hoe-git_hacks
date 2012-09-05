@@ -1,6 +1,6 @@
 = hoe-git-hacks
 
-* http://plexi
+* http://git.corp.attinteractive.com/bhenderson/hoe-git_hacks
 
 == DESCRIPTION:
 
