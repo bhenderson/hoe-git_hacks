@@ -16,7 +16,7 @@ class Hoe
       task "prep_release" do
         # opens $EDITOR with default message so user can preview what they are
         # committing.
-        sh 'git commit -am"Preps for release." -ev'
+        sh 'git commit -am"Prep for release." -ev'
       end
 
       # update the manifest and history files.
@@ -28,7 +28,7 @@ class Hoe
 
     # https://github.com/jbarnette/hoe-git/pull/7
     def git_tags
-      flags = "--date-order --simplify-by-decoration --pretty=format:%d"
+      flags = "--date-order --all --simplify-by-decoration --pretty=format:%d"
       `git log #{flags}`.scan(%r{#{git_release_tag_prefix}[^,)]+}).reverse
     end
 
