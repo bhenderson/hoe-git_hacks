@@ -19,15 +19,16 @@ class Hoe
         History.write
       end
 
+      task("prep_release").prerequisites.delete 'version:bump'
       desc "Commit latest changes."
       task "prep_release" do
         # opens $EDITOR with default message so user can preview what they are
         # committing.
+        version_task = "version:bump:#{History.version_bump}"
+        if Rake::Task.task_defined? version_task
+          task(version_task).invoke
+        end
         sh 'git commit -am"Prep for release." -ev'
-      end
-
-      task "version_bump" do
-        puts History.version_bump
       end
 
       # update the manifest and history files.
