@@ -3,13 +3,20 @@ class Hoe
     VERSION = '1.3.1'
 
     def define_git_hacks_tasks
+      History.instance self
+
       # https://github.com/jbarnette/hoe-git/pull/8
       task(:release_to).prerequisites.delete 'git:tag'
       task :postrelease => 'git:tag'
 
+      # overwrite default action
+      task('git:changelog').clear_actions.enhance do
+        History.write true
+      end
+
       desc 'Update the history file.'
       task 'prep_history' do
-        update_history_file
+        History.write
       end
 
       desc "Commit latest changes."
@@ -19,6 +26,10 @@ class Hoe
         sh 'git commit -am"Prep for release." -ev'
       end
 
+      task "version_bump" do
+        puts History.version_bump
+      end
+
       # update the manifest and history files.
       task 'prep_release' => ['git:manifest', 'prep_history']
       # convenience tasks.
@@ -26,35 +37,134 @@ class Hoe
       file history_file   => 'prep_history'
     end
 
-    # https://github.com/jbarnette/hoe-git/pull/7
-    def git_tags
-      flags = "--date-order --all --simplify-by-decoration --pretty=format:%d"
-      `git log #{flags}`.scan(%r{#{git_release_tag_prefix}[^,)]+}).reverse
-    end
+    class History
 
-    def update_history_file
-      file = self.history_file
-      data = File.read file
-
-      return if data[%r'=== #{version} /']
-      # append
-      File.open file, 'w' do |f|
-        write_latest_changelog f
-        f.puts data
+      # most logic copied from hoe/git
+      def self.write debug=false
+        instance.write debug
       end
-    end
 
-    def write_latest_changelog io
-      begin
-        stdout = STDOUT.clone
-        STDOUT.reopen io
-        ENV['FROM'] ||= git_tags.last
-        ENV['VERSION'] ||= self.version
-
-        task('git:changelog').invoke
-      ensure
-        STDOUT.reopen stdout
+      def self.instance(spec=nil)
+        @instance ||= new(spec)
       end
+
+      def self.version_bump
+        instance.version_bump
+      end
+
+      attr_reader :spec
+
+      def initialize spec
+        @spec = spec
+        @changes = Hash.new { |h,k| h[k] = [] }
+        @parsed_changes = false
+      end
+
+      def parse_changes
+        return @changes if @parsed_changes
+        @parsed_changes = true
+        tag   = ENV["FROM"] || git_tags.last
+        range = [tag, "HEAD"].compact.join ".."
+        cmd   = "git log #{range} '--format=format:%s'"
+
+        changes = `#{cmd}`.split("\n")
+
+        return if changes.empty?
+
+        codes = {
+          "!" => :major,
+          "+" => :minor,
+          "*" => :minor,
+          "-" => :bug,
+          "?" => :unknown,
+        }
+
+        codes_re = Regexp.escape codes.keys.join
+
+        changes.each do |change|
+          if change =~ /^\s*([#{codes_re}])\s*(.*)/ then
+            code, line = codes[$1], $2
+          else
+            code, line = codes["?"], change.chomp
+          end
+
+          @changes[code] << line
+        end
+
+        @changes
+      end
+
+      def write debug
+        if debug
+          write_head $stdout
+        else
+          update
+        end
+      end
+
+      def write_head io
+        parse_changes
+        now = Time.new.strftime "%Y-%m-%d"
+
+        io.puts "=== #{ENV['VERSION'] || 'NEXT'} / #{now}"
+        io.puts
+        changelog_section io, :major
+        changelog_section io, :minor
+        changelog_section io, :bug
+        changelog_section io, :unknown
+        io.puts
+      end
+
+      def changelog_section io, code
+        name = {
+          :major   => "major enhancement",
+          :minor   => "minor enhancement",
+          :bug     => "bug fix",
+          :unknown => "unknown",
+        }[code]
+
+        changes = @changes[code]
+        count = changes.size
+        name += "s" if count > 1
+        name.sub!(/fixs/, 'fixes')
+
+        return if count < 1
+
+        io.puts "* #{count} #{name}:"
+        io.puts
+        changes.sort.each do |line|
+          io.puts "  * #{line}"
+        end
+        io.puts
+      end
+
+      def git_tags
+        flags = "--date-order --all --simplify-by-decoration --pretty=format:%d"
+        `git log #{flags}`.scan(%r{#{spec.git_release_tag_prefix}[^,)]+}).reverse
+      end
+
+      def update
+        file = spec.history_file
+        data = File.read file
+
+        return if data[%r'=== #{spec.version} /']
+        # append
+        File.open file, 'w' do |f|
+          write_head f
+          f.puts data
+        end
+      end
+
+      def version_bump
+        parse_changes
+
+        [:major, :minor].each do |level|
+          return level unless @changes[level].empty?
+        end
+
+        return :patch
+      end
+
     end
 
   end if Hoe.plugins.include?(:git)

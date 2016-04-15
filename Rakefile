@@ -3,13 +3,13 @@
 require 'rubygems'
 require 'hoe'
 
+$LOAD_PATH.unshift 'lib'
+
 Hoe.plugins.delete :gemcutter
 Hoe.plugin :atti_push
-$:.unshift 'lib'
-Hoe.plugin :version, :git
 
 Hoe.spec 'hoe-git_hacks' do
-  developer 'Brian Henderson', 'bhenderson@attinteractive.com'
+  developer 'Brian Henderson', 'bhenderson@yp.com'
 
   self.readme_file      = "README.rdoc"
 
