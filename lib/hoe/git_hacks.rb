@@ -72,6 +72,8 @@ class Hoe
 
         return if changes.empty?
 
+        changes.reverse!
+
         codes = {
           "!" => :major,
           "+" => :minor,
@@ -133,7 +135,7 @@ class Hoe
 
         io.puts "* #{count} #{name}:"
         io.puts
-        changes.sort.each do |line|
+        changes.each do |line|
           io.puts "  * #{line}"
         end
         io.puts
