@@ -24,12 +24,17 @@ class Hoe
       task "prep_release" do
         # opens $EDITOR with default message so user can preview what they are
         # committing.
+        sh 'git commit -am"Prep for release." -ev'
+      end
+
+      desc "Auto bump version based on git history."
+      task 'git:version_bump' do
         version_task = "version:bump:#{History.version_bump}"
         if Rake::Task.task_defined? version_task
           task(version_task).invoke
         end
-        sh 'git commit -am"Prep for release." -ev'
       end
+      task :prep_history => 'git:version_bump'
 
       # update the manifest and history files.
       task 'prep_release' => ['git:manifest', 'prep_history']
