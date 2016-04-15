@@ -1,6 +1,6 @@
 class Hoe
   module Git_Hacks
-    VERSION = '1.3.1'
+    VERSION = '2.0.0'
 
     def define_git_hacks_tasks
       History.instance self
